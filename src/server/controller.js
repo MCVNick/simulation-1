@@ -15,5 +15,15 @@ module.exports = {
         req.app.get('db').delete_product(id)
             .then(() => res.sendStatus(200))
             .catch((error) => res.sendStatus(404))
+    },
+    updateProduct: (req, res) => {
+        const { id } = req.params
+        const { img_url, name, price } = req.body
+
+        console.log(id, img_url, name, price)
+
+        req.app.get('db').update_product(id, name, price, img_url)
+            .then(product => res.sendStatus(200))
+            .catch(error => {console.log('you broked it');res.sendStatus(500)})
     }
 }

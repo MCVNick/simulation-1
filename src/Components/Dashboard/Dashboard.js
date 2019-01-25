@@ -18,7 +18,9 @@ class Dashboard extends Component {
 
         this.handleDeleteInventoryItem = this.handleDeleteInventoryItem.bind(this)
         this.handleOnAddToInventoryClick = this.handleOnAddToInventoryClick.bind(this)
+        this.handleEditInventoryItem = this.handleEditInventoryItem.bind(this)
     }
+
 
     handleDeleteInventoryItem(id) {
         axios.delete(`/api/product/${id}`)
@@ -56,10 +58,36 @@ class Dashboard extends Component {
             .catch((err) => console.log(err))
     }
 
+    handleEditInventoryItem(product) {
+        const putObj = {
+            img_url: 'product.img_url',
+            name: 'product.name',
+            price: -2
+            // price: product.price
+        }
+
+        console.log(`/api/product/${product.id}`)
+
+        axios.put(`/api/product/${product.id}`, putObj)
+        .then((res) => {
+                console.log(putObj)
+                this.getProducts()
+            })
+            .catch((err) => console.log(err))
+    }
+
     render() {
         let displayInventory = this.state.inventory.map((product) => {
             return (
-                <Product key={product.id} id={product.id} name={product.name} price={product.price} img_url={product.img_url} handleDeleteInventoryItem={this.handleDeleteInventoryItem}/>
+                <Product
+                    key={product.id}
+                    product={product}
+                    name={product.name}
+                    price={product.price}
+                    img_url={product.img_url}
+                    handleDeleteInventoryItem={this.handleDeleteInventoryItem}
+                    handleEditInventoryItem={this.handleEditInventoryItem}
+                />
             )
         })
 
@@ -69,7 +97,7 @@ class Dashboard extends Component {
                     <Route exact path='/' render={() => { return displayInventory }} />
                     {/* doing it this way because I have to use component */}
                     {/* otherwise I would use render */}
-                    <Route exact path='/edit/:id' component={() => <Form handleOnAddToInventoryClick={this.handleOnAddToInventoryClick} />} />
+                    <Route exact path='/edit/:id' component={() => <Form />} />
                     <Route exact path='/add' component={() => <Form handleOnAddToInventoryClick={this.handleOnAddToInventoryClick} />} />
                 </Switch>
             </div>
