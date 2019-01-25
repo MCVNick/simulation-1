@@ -8,6 +8,7 @@ const ctrl = require('./controller')
 
 const app = express()
 app.use(bodyParser.json())
+app.use(express.static('build'))
 
 massive(CONNECTION_STRING)
     .then(db => app.set('db',db))
