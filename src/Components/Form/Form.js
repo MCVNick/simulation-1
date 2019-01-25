@@ -49,7 +49,7 @@ class Form extends Component {
                     <input onChange={(value) => this.handleOnNameInputChange(value.target.value)} value={this.state.nameInput} placeholder='name' />
                     <input type='number' onChange={(value) => this.handleOnPriceInputChange(value.target.value)} value={this.state.priceInput} placeholder='price' />
                     <button onClick={() => this.handleOnCancelClick()}>Cancel</button>
-                    <button>Add to Inventory</button>
+                    <button onClick={() => this.props.handleOnAddToInventoryClick(this.state.imageUrlInput, this.state.nameInput, this.state.priceInput)}>Add to Inventory</button>
                 </div>
             </div>
         )

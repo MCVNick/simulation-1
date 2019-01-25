@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Switch, Route, Link } from 'react-router-dom'
+import { Switch, Route } from 'react-router-dom'
 import axios from 'axios'
 import './Dashboard.css'
 
@@ -16,11 +16,19 @@ class Dashboard extends Component {
             inventory: []
         }
 
-        this.getProducts = this.getProducts.bind( this )
+        this.handleDeleteInventoryItem = this.handleDeleteInventoryItem.bind(this)
+        this.handleOnAddToInventoryClick = this.handleOnAddToInventoryClick.bind(this)
+    }
+
+    handleDeleteInventoryItem(id) {
+        axios.delete(`/api/product/${id}`)
+            .then((res) => {
+                this.getProducts()
+            })
+            .catch((err) => console.log(err))
     }
 
     componentDidMount() {
-        console.log('calling')
         this.getProducts()
     }
 
@@ -34,32 +42,35 @@ class Dashboard extends Component {
             .catch((err) => console.log(err))
     }
 
+    handleOnAddToInventoryClick(img_url, name, price) {
+        const postObj = {
+            img_url: img_url,
+            name: name,
+            price: price
+        }
+
+        axios.post('/api/product', postObj)
+            .then((res) => {
+                this.getProducts()
+            })
+            .catch((err) => console.log(err))
+    }
+
     render() {
         let displayInventory = this.state.inventory.map((product) => {
             return (
-                <Product key={product.id} name={product.name} price={product.price} img_url={product.img_url}/>
+                <Product key={product.id} id={product.id} name={product.name} price={product.price} img_url={product.img_url} handleDeleteInventoryItem={this.handleDeleteInventoryItem}/>
             )
         })
 
         return (
-            <div>
-                <Link to='/'>
-                    <button onClick={this.getProducts}>
-                        Dashboard
-                    </button>
-                </Link>
-                <Link to='/add'>
-                    <button>
-                        Add Inventory
-                    </button>
-                </Link>
-
+            <div className='parent'>
                 <Switch>
-                    <Route exact path='/' render={() => {return displayInventory}}/>
+                    <Route exact path='/' render={() => { return displayInventory }} />
                     {/* doing it this way because I have to use component */}
                     {/* otherwise I would use render */}
-                    <Route exact path='/edit/:id' component={() => <Form getProducts={this.getProducts}/>} />
-                    <Route exact path='/add' component={() => <Form getProducts={this.getProducts}/>} />
+                    <Route exact path='/edit/:id' component={() => <Form handleOnAddToInventoryClick={this.handleOnAddToInventoryClick} />} />
+                    <Route exact path='/add' component={() => <Form handleOnAddToInventoryClick={this.handleOnAddToInventoryClick} />} />
                 </Switch>
             </div>
         )
